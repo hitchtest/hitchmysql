@@ -1,7 +1,7 @@
 HitchMySQL
 ==========
 
-HitchPostgres is a plugin for the Hitch test framework that lets you run and
+HitchMySQL is a plugin for the Hitch test framework that lets you run and
 interact with MySQL in an isolated way as part of a test.
 
 Use
