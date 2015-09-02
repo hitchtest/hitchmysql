@@ -5,20 +5,15 @@ import shutil
 import sys
 
 
-
 class MySQLDatabase(object):
     def __init__(self, name, owner, dump=None):
         self.name = name
         self.owner = owner
         self.dump = dump
 
-    #def psql(self, command=None):
-        #"""Run PSQL command on this database."""
-        #return self.database_of.psql(command=command, database=self.name)
-
-    #def pg_dump(self, filename=None):
-        #"""Dump this database to 'filename'."""
-        #return self.database_of.pg_dump(filename, database=self.name)
+    def mysql(self, command=None):
+        """Run MySQL command on this database."""
+        return self.database_of.mysql(command=command, database=self.name)
 
     @property
     def database_of(self):
@@ -104,18 +99,21 @@ class MySQLService(Service):
 
     def poststart(self):
         self.log("Creating users and databases...")
-        for user in self.users:
-            self.mysql(
-                """create user '{}'@'localhost' identified by '{}';""".format(user.username, user.password)
-            ).run()
-        for database in self.databases:
-            self.mysql("""create database {};""".format(database.name)).run()
-            self.mysql("""grant all on {}.* to '{}'@'localhost';""".format(database.name, database.owner.username)).run()
-            #if database.dump is not None:
-                #self.psql(database=database.name, filename=database.dump).run()
+        try:
+            for user in self.users:
+                self.mysql(
+                    """create user '{}'@'localhost' identified by '{}';""".format(user.username, user.password)
+                ).run()
+            for database in self.databases:
+                self.mysql("""create database {};""".format(database.name)).run()
+                self.mysql("""grant all on {}.* to '{}'@'localhost';""".format(database.name, database.owner.username)).run()
+                #if database.dump is not None:
+                    #self.mysql(database=database.name, filename=database.dump).run()
+        except Exception as e:
+            self.log(str(e))
 
     def mysql(self, command=None, database=None, filename=None):
-        """Run PSQL command."""
+        """Run MySQL command."""
         cmd = [
                 self.mysql_package.mysql, "-u", "root",
                 "--port={}".format(self.port),
@@ -125,22 +123,5 @@ class MySQLService(Service):
             ) + (
                 ["-D", database, ] if database is not None else []
             )
+        self.log(' '.join(cmd))
         return self.subcommand(*tuple(cmd))
-
-    #def pg_dump(self, filename=None, database="template1"):
-        #"""Dump a database."""
-        #return self.subcommand(
-            #*tuple([
-                #self.postgres_package.pg_dump,
-                #"-d", database, "-p", str(self.port), "--host", self.pgdata,
-            #] + (
-                #["-f", filename, ] if filename is not None else []
-            #))
-        #)
-
-    #def pg_restore(self, filename, database="template1"):
-        #"""Restore a database."""
-        #return self.subcommand(*tuple([
-            #self.postgres_package.pg_restore, "-d", database, "-p",
-            #str(self.port), "--host", self.pgdata, filename
-        #]))
