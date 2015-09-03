@@ -31,13 +31,14 @@ class MySQLUser(object):
 class MySQLService(Service):
     stop_signal = signal.SIGTERM
 
-    def __init__(self, mysql_package, port=3306, users=None, databases=None, **kwargs):
+    def __init__(self, mysql_package, port=3306, initialize=True, users=None, databases=None, **kwargs):
         self.mysql_package = mysql_package
         #self.encoding = encoding
         #self.locale = locale
         self.port = port
         self.users = users
         self.databases = databases
+        self.initialize = initialize
         self.datadir = None
         kwargs['log_line_ready_checker'] = lambda line: "ready for connections" in line
         super(MySQLService, self).__init__(**kwargs)
@@ -84,33 +85,35 @@ class MySQLService(Service):
             return self._command
 
     def setup(self):
-        self.log("Initializing mysql database...")
-        try:
-            shutil.rmtree(self.datadir, ignore_errors=True)
-            self.subcommand(
-                self.mysql_package.mysql_install_db,
-                "--basedir={}".format(join(self.mysql_package.directory)),
-                "--datadir={}".format(self.datadir),
-                "--defaults-file={}".format(self.mycnf)
-            ).run()
-        except Exception as e:
-            self.warn(str(e))
-        self.log("Done initializing mysql database...")
+        if self.initialize:
+            self.log("Initializing mysql database...")
+            try:
+                shutil.rmtree(self.datadir, ignore_errors=True)
+                self.subcommand(
+                    self.mysql_package.mysql_install_db,
+                    "--basedir={}".format(join(self.mysql_package.directory)),
+                    "--datadir={}".format(self.datadir),
+                    "--defaults-file={}".format(self.mycnf)
+                ).run()
+            except Exception as e:
+                self.warn(str(e))
+            self.log("Done initializing mysql database...")
 
     def poststart(self):
-        self.log("Creating users and databases...")
-        try:
-            for user in self.users:
-                self.mysql(
-                    """create user '{}'@'localhost' identified by '{}';""".format(user.username, user.password)
-                ).run()
-            for database in self.databases:
-                self.mysql("""create database {};""".format(database.name)).run()
-                self.mysql("""grant all on {}.* to '{}'@'localhost';""".format(database.name, database.owner.username)).run()
-                #if database.dump is not None:
-                    #self.mysql(database=database.name, filename=database.dump).run()
-        except Exception as e:
-            self.log(str(e))
+        if self.initialize:
+            self.log("Creating users and databases...")
+            try:
+                for user in self.users:
+                    self.mysql(
+                        """create user '{}'@'localhost' identified by '{}';""".format(user.username, user.password)
+                    ).run()
+                for database in self.databases:
+                    self.mysql("""create database {};""".format(database.name)).run()
+                    self.mysql("""grant all on {}.* to '{}'@'localhost';""".format(database.name, database.owner.username)).run()
+                    #if database.dump is not None:
+                        #self.mysql(database=database.name, filename=database.dump).run()
+            except Exception as e:
+                self.log(str(e))
 
     def mysql(self, command=None, database=None, filename=None):
         """Run MySQL command."""
