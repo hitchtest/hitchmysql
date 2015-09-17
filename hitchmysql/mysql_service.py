@@ -1,3 +1,4 @@
+from hitchtest.environment import checks
 from hitchserve import Service
 from os.path import join
 import signal
@@ -40,6 +41,7 @@ class MySQLService(Service):
         self.databases = databases
         self.initialize = initialize
         self.datadir = None
+        checks.freeports([port, ])
         kwargs['log_line_ready_checker'] = lambda line: "ready for connections" in line
         super(MySQLService, self).__init__(**kwargs)
 

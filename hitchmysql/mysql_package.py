@@ -1,7 +1,8 @@
 from hitchtest import HitchPackage, utils
 from subprocess import check_output, call
-from os.path import join, exists
+from hitchtest.environment import checks
 from os import makedirs, chdir, chmod
+from os.path import join, exists
 import shutil
 import getpass
 import stat
@@ -74,6 +75,7 @@ class MySQLPackage(HitchPackage):
         else:
             self.directory = directory
         self.bin_directory = bin_directory
+        checks.packages(["build-essential", "libaio1", "libmysqlclient-dev", ])
 
     def verify(self):
         version_output = check_output([self.mysqld, "--version"]).decode('utf8')
