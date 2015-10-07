@@ -75,7 +75,7 @@ class MySQLPackage(HitchPackage):
         else:
             self.directory = directory
         self.bin_directory = bin_directory
-        checks.packages(["build-essential", "libaio1", "libmysqlclient-dev", "cmake", "libncurses5-dev", ])
+        checks.packages(["libaio1", "libmysqlclient-dev", "libncurses5-dev", ])
 
     def verify(self):
         version_output = check_output([self.mysqld, "--version"]).decode('utf8')
