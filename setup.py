@@ -14,7 +14,7 @@ def read(*parts):
     return codecs.open(os.path.join(os.path.abspath(os.path.dirname(__file__)), *parts), 'r').read()
 
 setup(name="hitchmysql",
-      version="0.2.3",
+      version="0.2.4",
       description="Plugin to run MySQL using the Hitch testing framework.",
       long_description=read('README.rst'),
       classifiers=[
