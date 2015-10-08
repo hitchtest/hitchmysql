@@ -5,6 +5,7 @@ from os import makedirs, chdir, chmod
 from os.path import join, exists
 import shutil
 import getpass
+import hitchmysql
 import stat
 import os
 
@@ -75,7 +76,7 @@ class MySQLPackage(HitchPackage):
         else:
             self.directory = directory
         self.bin_directory = bin_directory
-        checks.packages(["libaio1", "libmysqlclient-dev", "libncurses5-dev", ])
+        checks.packages(hitchmysql.UNIXPACKAGES)
 
     def verify(self):
         version_output = check_output([self.mysqld, "--version"]).decode('utf8')
