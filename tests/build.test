@@ -1,0 +1,25 @@
+{% for version in mysql_versions %}
+- name: Build MySQL
+  preconditions:
+    python_version: 3.5.0
+    files:
+      build.py: |
+        from hitchtest import Paths
+        from path import Path
+        import hitchtest
+        import hitchmysql
+        import os
+
+        cwd = os.getcwd()
+        paths = Paths()
+        paths.hitchpkg = Path(cwd)
+        paths.hitch = Path(cwd)
+        mysqlpackage = hitchmysql.MySQLPackage(version="{{ version }}", paths=paths)
+        mysqlpackage.build()
+  tags:
+    - build
+    - py{{ version }}
+  scenario:
+    - Run python: build.py
+    - Exit
+{% endfor %}

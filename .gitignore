@@ -1,9 +1,10 @@
 setup.cfg
 *.kate-swp
 *.pyc
+*.swp
 setup.cfg
 build/
 dist/
 docs/html/
-venv/
+.hitch
 hitchmysql.egg-info/

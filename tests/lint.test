@@ -1,0 +1,12 @@
+- name : Lint
+  preconditions:
+    python_version: 3.5.0
+  scenario:
+    - lint:
+        args:
+          - hitchmysql 
+          - --exclude=__init__.py
+          - --max-line-length=100
+    - lint:
+        args:
+          - tests/engine.py

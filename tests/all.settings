@@ -1,0 +1,6 @@
+mysql_versions:
+  - 5.6.26 
+python_invalid_versions:
+  - 3.2.6
+old_python3_versions:
+  - 3.2.6
