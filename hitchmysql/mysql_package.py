@@ -85,7 +85,7 @@ class MySQLPackage(HitchPackage):
 
     def build(self):
         download_to = join(self.get_downloads_directory(), "mysql-{}.tar.gz".format(self.version))
-        download_url = "https://dev.mysql.com/get/Downloads/MySQL-{0}/mysql-{1}.tar.gz".format(
+        download_url = "http://dev.mysql.com/get/Downloads/MySQL-{0}/mysql-{1}.tar.gz".format(
             ".".join(self.version.split(".")[:2]),
             self.version,
         )
