@@ -1,5 +1,5 @@
 from hitchtest import HitchPackage, utils
-from subprocess import check_output, call
+from subprocess import check_output, check_call
 from hitchtest.environment import checks
 from os import makedirs, chdir, chmod
 from os.path import join, exists
@@ -67,7 +67,7 @@ class MySQLPackage(HitchPackage):
 
     name = "MySQL"
 
-    def __init__(self, version, directory=None, bin_directory=None):
+    def __init__(self, version="5.6.26", directory=None, bin_directory=None):
         super(MySQLPackage, self).__init__()
         self.version = self.check_version(version, self.VERSIONS, ISSUES_URL)
 
@@ -93,8 +93,8 @@ class MySQLPackage(HitchPackage):
         if not exists(self.directory):
             utils.extract_archive(download_to, self.get_build_directory())
             chdir(self.directory)
-            call(["./BUILD/compile-dist"])
-            call([
+            check_call(["./BUILD/compile-dist"])
+            check_call([
                 "./configure",
                 "--prefix={}".format(self.directory),
                 "--enable-assembler",
@@ -104,8 +104,8 @@ class MySQLPackage(HitchPackage):
                 "--with-unix-socket-path={}/tmp/mysql.sock".format(self.directory),
                 "--localstatedir={}/data".format(self.directory),
             ])
-            call(["make"])
-            call(["make", "install"])
+            check_call(["make"])
+            check_call(["make", "install"])
 
             makedirs("tmp")
 
