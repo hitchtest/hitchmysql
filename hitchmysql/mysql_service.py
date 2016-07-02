@@ -32,7 +32,7 @@ class MySQLUser(object):
 class MySQLService(Service):
     stop_signal = signal.SIGTERM
 
-    def __init__(self, mysql_package, port=3306, initialize=True, users=None, databases=None, **kwargs):
+    def __init__(self, mysql_package, port=13306, initialize=True, users=None, databases=None, **kwargs):
         self.mysql_package = mysql_package
         #self.encoding = encoding
         #self.locale = locale
