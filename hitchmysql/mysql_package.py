@@ -16,27 +16,30 @@ ISSUES_URL = "http://github.com/hitchtest/hitchmysql/issues"
 MYCNF = """[mysqld]
 user={1}
 basedir={0}
-port=3307
+port=13307
+max_allowed_packet=64M
+wait_timeout=6000
 
 [mysqld_safe]
 lc-messages-dir={0}
 
 [client]
-port=3307
+port=13307
 user={1}
 
 [mysqladmin]
 user=root
-port=3307
+port=13307
 
 [mysql]
-port=3307
+port=13307
 
 [mysql_install_db]
 user={1}
 port=3307
 basedir={0}
-datadir={0}/data"""
+datadir={0}/data
+mpdir=/tmp/"""
 
 
 class MySQLPackage(HitchPackage):
